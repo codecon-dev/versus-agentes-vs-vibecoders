@@ -14,7 +14,9 @@ const Terminal = ({
   slotWon,
   setSlotWon,
   apiSymbols,
-  setApiSymbols
+  setApiSymbols,
+  destroying,
+  setDestroying
 }) => {
   const [history, setHistory] = useState([
     { type: 'output', text: 'Terminal Retro v1.0' },
@@ -458,7 +460,16 @@ const Terminal = ({
             setSlotResult(lines.join('\n'))
 
             if (data.balance <= 0) {
-              setTimeout(() => triggerGameOver(), 1500)
+              if (param === '10x') {
+                // Animação de destruição da tela
+                setDestroying(true)
+                setTimeout(() => {
+                  setDestroying(false)
+                  triggerGameOver()
+                }, 4500)
+              } else {
+                setTimeout(() => triggerGameOver(), 1500)
+              }
             }
           }, 2000)
         })

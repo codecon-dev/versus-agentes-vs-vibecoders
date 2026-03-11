@@ -14,6 +14,7 @@ function App() {
     ['🍊', '🍇', '🍉', '⭐', '💎', '7️⃣']
   ])
   const [apiSymbols, setApiSymbols] = useState([])
+  const [destroying, setDestroying] = useState(false)
 
   const getSymbolImage = (name) => {
     const symbol = apiSymbols.find(s => s.name === name)
@@ -33,7 +34,29 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${destroying ? 'app-destroying' : ''}`}>
+      {destroying && (
+        <>
+          <div className="destroy-overlay" />
+          <div className="destroy-cracks" />
+          <div className="destroy-glitch-text">SYSTEM FAILURE</div>
+          <div className="destroy-fragments">
+            {[...Array(30)].map((_, i) => (
+              <div key={i} className="destroy-fragment" style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${0.5 + Math.random() * 1.5}s`,
+                animationDuration: `${1.5 + Math.random() * 2}s`,
+                width: `${20 + Math.random() * 80}px`,
+                height: `${20 + Math.random() * 60}px`,
+                '--rand-x': Math.random(),
+                '--rand-y': Math.random(),
+                '--rand-r': Math.random(),
+              }} />
+            ))}
+          </div>
+        </>
+      )}
       <div className="image-viewer">
         {slotMachineActive ? (
           <div className={`slot-machine-container ${slotWon ? `win-${slotWon}` : ''}`}>
@@ -88,6 +111,8 @@ function App() {
           setSlotWon={setSlotWon}
           apiSymbols={apiSymbols}
           setApiSymbols={setApiSymbols}
+          destroying={destroying}
+          setDestroying={setDestroying}
         />
       </div>
     </div>
