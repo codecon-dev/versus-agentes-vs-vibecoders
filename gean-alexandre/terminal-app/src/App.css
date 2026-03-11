@@ -176,118 +176,265 @@
   font-family: 'Courier New', 'Courier', monospace;
 }
 
-/* Efeitos de vitória - JACKPOT */
-.slot-machine-container.jackpot-win {
-  animation: jackpotShake 0.5s ease-in-out infinite;
+/* ==========================================
+   NORMAL WIN - shake suave
+   ========================================== */
+.slot-machine-container.win-normal {
+  animation: normalShake 0.5s ease-in-out 3;
 }
 
-.slot-machine-title.jackpot-title {
-  animation: jackpotPulse 0.3s ease-in-out infinite;
-  color: #ffbd2e;
-  text-shadow: 
-    0 0 20px rgba(255, 189, 46, 1),
-    0 0 40px rgba(255, 189, 46, 0.8),
-    0 0 60px rgba(255, 189, 46, 0.6);
+.win-title-normal {
+  color: #39ff14;
+  text-shadow: 0 0 20px rgba(57, 255, 20, 1), 0 0 40px rgba(57, 255, 20, 0.6);
 }
 
-.slot-machine-reels.jackpot-reels {
-  animation: jackpotShake 0.4s ease-in-out infinite;
+.win-reel-normal {
+  border-color: #39ff14;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.8), inset 0 0 10px rgba(57, 255, 20, 0.2);
 }
 
-.slot-reel.jackpot-reel {
-  animation: jackpotReelShake 0.3s ease-in-out infinite;
-  border-color: #ffbd2e;
-  box-shadow: 
-    0 0 30px rgba(255, 189, 46, 1),
-    0 0 60px rgba(255, 189, 46, 0.8),
-    inset 0 0 20px rgba(255, 189, 46, 0.3);
-  background: rgba(255, 189, 46, 0.3);
+.win-symbol-normal {
+  animation: normalPulse 0.6s ease-in-out 3;
 }
 
-.slot-reel-center.jackpot-symbol {
-  animation: jackpotSymbolExplode 0.5s ease-out infinite;
-  font-size: 90px;
-  filter: drop-shadow(0 0 20px rgba(255, 189, 46, 1));
+@keyframes normalShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 0); }
+  75% { transform: translate(3px, 0); }
 }
 
-@keyframes jackpotShake {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  10% {
-    transform: translate(-5px, -5px) rotate(-2deg);
-  }
-  20% {
-    transform: translate(5px, 5px) rotate(2deg);
-  }
-  30% {
-    transform: translate(-5px, 5px) rotate(-2deg);
-  }
-  40% {
-    transform: translate(5px, -5px) rotate(2deg);
-  }
-  50% {
-    transform: translate(-3px, -3px) rotate(-1deg);
-  }
-  60% {
-    transform: translate(3px, 3px) rotate(1deg);
-  }
-  70% {
-    transform: translate(-3px, 3px) rotate(-1deg);
-  }
-  80% {
-    transform: translate(3px, -3px) rotate(1deg);
-  }
-  90% {
-    transform: translate(-2px, -2px) rotate(-0.5deg);
-  }
+@keyframes normalPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
-@keyframes jackpotPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.9;
-  }
+/* ==========================================
+   PLUS WIN - lantejoulas / sparkles
+   ========================================== */
+.slot-machine-container.win-plus {
+  animation: plusGlow 0.4s ease-in-out infinite alternate;
 }
 
-@keyframes jackpotReelShake {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translate(-8px, -8px) rotate(-3deg) scale(1.05);
-  }
-  50% {
-    transform: translate(8px, 8px) rotate(3deg) scale(1.05);
-  }
-  75% {
-    transform: translate(-8px, 8px) rotate(-3deg) scale(1.05);
-  }
+.sparkles-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+    radial-gradient(2px 2px at 40% 70%, #c0f, transparent),
+    radial-gradient(2px 2px at 60% 20%, #ff0, transparent),
+    radial-gradient(2px 2px at 80% 60%, #0ff, transparent),
+    radial-gradient(3px 3px at 10% 80%, #f0f, transparent),
+    radial-gradient(3px 3px at 70% 40%, #ff0, transparent),
+    radial-gradient(2px 2px at 90% 10%, #fff, transparent),
+    radial-gradient(2px 2px at 50% 50%, #c0f, transparent),
+    radial-gradient(3px 3px at 30% 90%, #0ff, transparent),
+    radial-gradient(2px 2px at 85% 85%, #ff0, transparent);
+  background-size: 200% 200%;
+  animation: sparkleMove 1s linear infinite;
 }
 
-@keyframes jackpotSymbolExplode {
+.win-title-plus {
+  color: #c0f;
+  text-shadow: 0 0 20px rgba(204, 0, 255, 1), 0 0 40px rgba(204, 0, 255, 0.6);
+  animation: plusPulse 0.3s ease-in-out infinite alternate;
+}
+
+.win-reels-plus {
+  animation: plusShake 0.4s ease-in-out infinite;
+}
+
+.win-reel-plus {
+  border-color: #c0f;
+  box-shadow: 0 0 25px rgba(204, 0, 255, 0.8), 0 0 50px rgba(204, 0, 255, 0.4), inset 0 0 15px rgba(204, 0, 255, 0.2);
+  background: rgba(204, 0, 255, 0.15);
+}
+
+.win-symbol-plus {
+  animation: plusSymbol 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes sparkleMove {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+@keyframes plusGlow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.15); }
+}
+
+@keyframes plusPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes plusShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-4px, -2px); }
+  50% { transform: translate(4px, 2px); }
+  75% { transform: translate(-2px, 4px); }
+}
+
+@keyframes plusSymbol {
+  from { transform: scale(1); filter: brightness(1); }
+  to { transform: scale(1.15); filter: brightness(1.3); }
+}
+
+/* ==========================================
+   GOLD WIN - fogos de artifício
+   ========================================== */
+.slot-machine-container.win-gold {
+  animation: goldShake 0.3s ease-in-out infinite;
+}
+
+.fireworks-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fireworks-overlay::before,
+.fireworks-overlay::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.fireworks-overlay::before {
+  top: 20%;
+  left: 25%;
+  box-shadow:
+    0 0 0 0 rgba(255, 215, 0, 1),
+    30px -40px 0 0 #ff4444,
+    -25px -50px 0 0 #ffbd2e,
+    50px -20px 0 0 #ff6600,
+    -40px -30px 0 0 #ff4444,
+    15px -60px 0 0 #ffbd2e,
+    -15px -15px 0 0 #ff6600,
+    45px -55px 0 0 #ff4444,
+    -35px -45px 0 0 #ffbd2e,
+    60px -35px 0 0 #ff6600,
+    -50px -60px 0 0 #ff4444,
+    20px 10px 0 0 #ffbd2e;
+  animation: fireworkExplode1 1.2s ease-out infinite;
+}
+
+.fireworks-overlay::after {
+  top: 30%;
+  right: 20%;
+  box-shadow:
+    0 0 0 0 rgba(255, 100, 0, 1),
+    -30px -35px 0 0 #ffbd2e,
+    25px -55px 0 0 #ff4444,
+    -50px -25px 0 0 #ff6600,
+    40px -40px 0 0 #ffbd2e,
+    -20px -65px 0 0 #ff4444,
+    35px -10px 0 0 #ff6600,
+    -45px -50px 0 0 #ffbd2e,
+    55px -30px 0 0 #ff4444,
+    -10px -20px 0 0 #ff6600,
+    20px -70px 0 0 #ffbd2e,
+    -60px -40px 0 0 #ff4444;
+  animation: fireworkExplode2 1.4s ease-out infinite 0.3s;
+}
+
+.win-title-gold {
+  color: #ffd700;
+  font-size: 42px;
+  animation: goldTitle 0.3s ease-in-out infinite alternate;
+  text-shadow:
+    0 0 20px rgba(255, 215, 0, 1),
+    0 0 40px rgba(255, 215, 0, 0.8),
+    0 0 80px rgba(255, 215, 0, 0.5),
+    0 0 120px rgba(255, 100, 0, 0.3);
+}
+
+.win-reels-gold {
+  animation: goldReelsShake 0.3s ease-in-out infinite;
+}
+
+.win-reel-gold {
+  border-color: #ffd700;
+  box-shadow:
+    0 0 30px rgba(255, 215, 0, 1),
+    0 0 60px rgba(255, 215, 0, 0.6),
+    0 0 100px rgba(255, 100, 0, 0.3),
+    inset 0 0 20px rgba(255, 215, 0, 0.3);
+  background: rgba(255, 215, 0, 0.2);
+  animation: goldReelPulse 0.3s ease-in-out infinite alternate;
+}
+
+.win-symbol-gold {
+  animation: goldSymbol 0.4s ease-in-out infinite;
+}
+
+@keyframes fireworkExplode1 {
   0% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(0);
     opacity: 1;
-  }
-  25% {
-    transform: scale(1.2) rotate(90deg);
-    opacity: 0.9;
   }
   50% {
-    transform: scale(1.1) rotate(180deg);
+    transform: scale(1.5);
     opacity: 1;
-  }
-  75% {
-    transform: scale(1.2) rotate(270deg);
-    opacity: 0.9;
   }
   100% {
-    transform: scale(1) rotate(360deg);
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes fireworkExplode2 {
+  0% {
+    transform: scale(0);
     opacity: 1;
   }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes goldShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-5px, -5px) rotate(-2deg); }
+  30% { transform: translate(5px, -3px) rotate(2deg); }
+  50% { transform: translate(-3px, 5px) rotate(-1deg); }
+  70% { transform: translate(5px, 3px) rotate(1deg); }
+  90% { transform: translate(-3px, -3px) rotate(-1deg); }
+}
+
+@keyframes goldTitle {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+@keyframes goldReelsShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-6px, -4px) rotate(-2deg); }
+  50% { transform: translate(6px, 4px) rotate(2deg); }
+  75% { transform: translate(-4px, 6px) rotate(-1deg); }
+}
+
+@keyframes goldReelPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes goldSymbol {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.2) rotate(5deg); }
+  50% { transform: scale(1.1) rotate(-5deg); }
+  75% { transform: scale(1.2) rotate(3deg); }
 }

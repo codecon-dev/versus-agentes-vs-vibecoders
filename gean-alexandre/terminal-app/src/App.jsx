@@ -7,7 +7,7 @@ function App() {
   const [slotMachineActive, setSlotMachineActive] = useState(false)
   const [slotReels, setSlotReels] = useState(['🍒', '🍋', '🍊'])
   const [slotSpinning, setSlotSpinning] = useState(false)
-  const [slotWon, setSlotWon] = useState(false)
+  const [slotWon, setSlotWon] = useState(null) // null, 'normal', 'plus', 'gold'
   const [slotReelSymbols, setSlotReelSymbols] = useState([
     ['🍒', '🍋', '🍊', '🍇', '🍉', '⭐'],
     ['🍋', '🍊', '🍇', '🍉', '⭐', '💎'],
@@ -36,11 +36,13 @@ function App() {
     <div className="app">
       <div className="image-viewer">
         {slotMachineActive ? (
-          <div className={`slot-machine-container ${slotWon ? 'jackpot-win' : ''}`}>
-            <div className={`slot-machine-title ${slotWon ? 'jackpot-title' : ''}`}>🎰 CAÇA-NÍQUEL 🎰</div>
-            <div className={`slot-machine-reels ${slotWon ? 'jackpot-reels' : ''}`}>
+          <div className={`slot-machine-container ${slotWon ? `win-${slotWon}` : ''}`}>
+            {slotWon === 'gold' && <div className="fireworks-overlay" />}
+            {slotWon === 'plus' && <div className="sparkles-overlay" />}
+            <div className={`slot-machine-title ${slotWon ? `win-title-${slotWon}` : ''}`}>🎰 CAÇA-NÍQUEL 🎰</div>
+            <div className={`slot-machine-reels ${slotWon ? `win-reels-${slotWon}` : ''}`}>
               {[0, 1, 2].map(reelIdx => (
-                <div key={reelIdx} className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
+                <div key={reelIdx} className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? `win-reel-${slotWon}` : ''}`}>
                   <div className="slot-reel-strip">
                     {slotReelSymbols[reelIdx].map((symbol, idx) => (
                       <div key={idx} className="slot-symbol">{getSymbolImage(symbol)}</div>
@@ -50,7 +52,7 @@ function App() {
                     ))}
                   </div>
                   {!slotSpinning && (
-                    <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{getSymbolImage(slotReels[reelIdx])}</div>
+                    <div className={`slot-reel-center ${slotWon ? `win-symbol-${slotWon}` : ''}`}>{getSymbolImage(slotReels[reelIdx])}</div>
                   )}
                 </div>
               ))}

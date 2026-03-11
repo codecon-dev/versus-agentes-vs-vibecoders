@@ -379,7 +379,7 @@ const Terminal = ({
       }
 
       setSlotSpinning(true)
-      setSlotWon(false)
+      setSlotWon(null)
 
       const names = apiSymbols.map(s => s.name)
 
@@ -443,8 +443,9 @@ const Terminal = ({
             const lines = []
 
             if (won) {
-              setSlotWon(true)
-              setTimeout(() => setSlotWon(false), 3000)
+              const winLevel = data.symbols[0].level
+              setSlotWon(winLevel)
+              setTimeout(() => setSlotWon(null), 5000)
               lines.push(`🎉 JACKPOT! Você ganhou R$${data.credit}!`)
             } else {
               lines.push('Tente novamente!')
