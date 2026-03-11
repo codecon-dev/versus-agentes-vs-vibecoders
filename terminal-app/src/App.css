@@ -1,0 +1,171 @@
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.image-viewer {
+  flex: 1;
+  width: 100%;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.viewer-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.viewer-placeholder {
+  color: #666;
+  font-size: 18px;
+  text-align: center;
+  padding: 40px;
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.terminal-section {
+  height: 400px;
+  min-height: 400px;
+  width: 100%;
+  background: #0a0a0a;
+  border-top: 2px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Máquina de Caça-Níquel */
+.slot-machine-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.slot-machine-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #39ff14;
+  text-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+  margin-bottom: 40px;
+  letter-spacing: 3px;
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+.slot-machine-reels {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 40px 0;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 3px solid #1a4d2e;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+}
+
+.slot-reel {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(26, 77, 46, 0.5);
+  border: 3px solid #39ff14;
+  border-radius: 12px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(57, 255, 20, 0.3);
+  transition: all 0.3s ease;
+}
+
+.slot-reel-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+.slot-reel.spinning .slot-reel-strip {
+  animation: reelSpin 0.08s linear infinite;
+}
+
+.slot-reel:not(.spinning) .slot-reel-strip {
+  transform: translateY(0) !important;
+  animation: none;
+}
+
+@keyframes reelSpin {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-120px);
+  }
+}
+
+.slot-symbol {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  flex-shrink: 0;
+}
+
+.slot-reel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.slot-reel.spinning {
+  border-color: #ffbd2e;
+  box-shadow: 0 0 30px rgba(255, 189, 46, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 189, 46, 0.2);
+}
+
+.slot-reel.spinning .slot-reel-center {
+  display: none;
+}
+
+.slot-machine-instructions {
+  margin-top: 30px;
+  color: #39ff14;
+  font-size: 18px;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
+  font-family: 'Courier New', 'Courier', monospace;
+}
