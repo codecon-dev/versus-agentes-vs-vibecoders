@@ -7,6 +7,7 @@ function App() {
   const [slotMachineActive, setSlotMachineActive] = useState(false)
   const [slotReels, setSlotReels] = useState(['🍒', '🍋', '🍊'])
   const [slotSpinning, setSlotSpinning] = useState(false)
+  const [slotWon, setSlotWon] = useState(false)
   const [slotReelSymbols, setSlotReelSymbols] = useState([
     ['🍒', '🍋', '🍊', '🍇', '🍉', '⭐'],
     ['🍋', '🍊', '🍇', '🍉', '⭐', '💎'],
@@ -26,10 +27,10 @@ function App() {
     <div className="app">
       <div className="image-viewer">
         {slotMachineActive ? (
-          <div className="slot-machine-container">
-            <div className="slot-machine-title">🎰 CAÇA-NÍQUEL 🎰</div>
-            <div className="slot-machine-reels">
-              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''}`}>
+          <div className={`slot-machine-container ${slotWon ? 'jackpot-win' : ''}`}>
+            <div className={`slot-machine-title ${slotWon ? 'jackpot-title' : ''}`}>🎰 CAÇA-NÍQUEL 🎰</div>
+            <div className={`slot-machine-reels ${slotWon ? 'jackpot-reels' : ''}`}>
+              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
                 <div className="slot-reel-strip">
                   {slotReelSymbols[0].map((symbol, idx) => (
                     <div key={idx} className="slot-symbol">{symbol}</div>
@@ -40,10 +41,10 @@ function App() {
                   ))}
                 </div>
                 {!slotSpinning && (
-                  <div className="slot-reel-center">{slotReels[0]}</div>
+                  <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{slotReels[0]}</div>
                 )}
               </div>
-              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''}`}>
+              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
                 <div className="slot-reel-strip">
                   {slotReelSymbols[1].map((symbol, idx) => (
                     <div key={idx} className="slot-symbol">{symbol}</div>
@@ -53,10 +54,10 @@ function App() {
                   ))}
                 </div>
                 {!slotSpinning && (
-                  <div className="slot-reel-center">{slotReels[1]}</div>
+                  <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{slotReels[1]}</div>
                 )}
               </div>
-              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''}`}>
+              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
                 <div className="slot-reel-strip">
                   {slotReelSymbols[2].map((symbol, idx) => (
                     <div key={idx} className="slot-symbol">{symbol}</div>
@@ -66,7 +67,7 @@ function App() {
                   ))}
                 </div>
                 {!slotSpinning && (
-                  <div className="slot-reel-center">{slotReels[2]}</div>
+                  <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{slotReels[2]}</div>
                 )}
               </div>
             </div>
@@ -97,6 +98,8 @@ function App() {
           setSlotSpinning={setSlotSpinning}
           slotReelSymbols={slotReelSymbols}
           setSlotReelSymbols={setSlotReelSymbols}
+          slotWon={slotWon}
+          setSlotWon={setSlotWon}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import './Terminal.css'
 
-const Terminal = ({
+const Terminal = ({ 
   onCommandExecuted,
   slotMachineActive,
   setSlotMachineActive,
@@ -10,7 +10,9 @@ const Terminal = ({
   slotSpinning,
   setSlotSpinning,
   slotReelSymbols,
-  setSlotReelSymbols
+  setSlotReelSymbols,
+  slotWon,
+  setSlotWon
 }) => {
   const [history, setHistory] = useState([
     { type: 'output', text: 'Terminal Retro v1.0' },
@@ -86,8 +88,6 @@ const Terminal = ({
         '  uptime   - Mostra tempo de atividade',
         '  cal      - Mostra calendário do mês atual',
         '  login    - Identifica-se no sistema',
-        '  init-game - Inicia o jogo de caça-níquel',
-        '  exit-game - Encerra o jogo de caça-níquel',
         '',
         'Atalhos:',
         '  Ctrl+L   - Limpa o terminal',
@@ -103,6 +103,11 @@ const Terminal = ({
           '  matrix   - Ativa modo matrix',
           '  fortune  - Mostra uma mensagem da sorte',
           '  neofetch - Mostra informações do sistema estilizadas',
+          '  init-game - Inicia o jogo de caça-níquel',
+          '  spin     - Gira os rolos da máquina de caça-níquel',
+          '             Parâmetros: win/jackpot (força vitória),',
+          '                          double/two (força dois iguais)',
+          '  exit-game - Encerra o jogo de caça-níquel',
           '  logout   - Desconecta do sistema'
         )
       }
@@ -130,7 +135,19 @@ const Terminal = ({
       ]
     }),
     login: (args) => {
-      const name = args.join(' ') || 'guest'
+      const name = args.join(' ').trim()
+
+      if (!name) {
+        return {
+          type: 'error',
+          lines: [
+            'Erro: Nome de usuário é obrigatório.',
+            'Uso: login <nome_do_usuário>',
+            'Exemplo: login joao'
+          ]
+        }
+      }
+
       setIsIdentified(true)
       setUserName(name)
       return {
@@ -221,6 +238,12 @@ const Terminal = ({
       }
     },
     'init-game': () => {
+      if (!isIdentified) {
+        return {
+          type: 'error',
+          lines: ['Acesso negado. Você precisa estar identificado para usar este comando.', 'Use "login <seu_nome>" para se identificar.']
+        }
+      }
       setSlotMachineActive(true)
       return {
         type: 'output',
@@ -228,6 +251,12 @@ const Terminal = ({
       }
     },
     'exit-game': () => {
+      if (!isIdentified) {
+        return {
+          type: 'error',
+          lines: ['Acesso negado. Você precisa estar identificado para usar este comando.', 'Use "login <seu_nome>" para se identificar.']
+        }
+      }
       if (!slotMachineActive) {
         return {
           type: 'error',
@@ -242,7 +271,13 @@ const Terminal = ({
         lines: ['Jogo de Caça-Níquel encerrado. A área superior voltou ao normal.']
       }
     },
-    spin: () => {
+    spin: (args) => {
+      if (!isIdentified) {
+        return {
+          type: 'error',
+          lines: ['Acesso negado. Você precisa estar identificado para usar este comando.', 'Use "login <seu_nome>" para se identificar.']
+        }
+      }
       if (!slotMachineActive) {
         return {
           type: 'error',
@@ -251,8 +286,38 @@ const Terminal = ({
       }
 
       setSlotSpinning(true)
+      setSlotWon(false) // Reseta o estado de vitória ao iniciar novo spin
 
       const symbols = ['🍒', '🍋', '🍊', '🍇', '🍉', '⭐', '💎', '7️⃣']
+      const param = args[0]?.toLowerCase()
+
+      // Determina os símbolos finais baseado no parâmetro
+      let finalReels = []
+
+      if (param === 'win' || param === 'jackpot') {
+        // Força vitória - todos os símbolos iguais
+        const winSymbol = symbols[Math.floor(Math.random() * symbols.length)]
+        finalReels = [winSymbol, winSymbol, winSymbol]
+      } else if (param === 'double' || param === 'two') {
+        // Força dois símbolos iguais
+        const doubleSymbol = symbols[Math.floor(Math.random() * symbols.length)]
+        const differentSymbol = symbols.filter(s => s !== doubleSymbol)[Math.floor(Math.random() * (symbols.length - 1))]
+        // Aleatoriza qual posição será diferente
+        const positions = [0, 1, 2]
+        const diffPos = positions[Math.floor(Math.random() * 3)]
+        finalReels = [doubleSymbol, doubleSymbol, doubleSymbol]
+        finalReels[diffPos] = differentSymbol
+      } else if (param && symbols.includes(param)) {
+        // Força um símbolo específico (todos iguais)
+        finalReels = [param, param, param]
+      } else {
+        // Giro normal aleatório
+        finalReels = [
+          symbols[Math.floor(Math.random() * symbols.length)],
+          symbols[Math.floor(Math.random() * symbols.length)],
+          symbols[Math.floor(Math.random() * symbols.length)]
+        ]
+      }
 
       // Cria sequências aleatórias para cada rolo durante o giro
       const createRandomSequence = () => {
@@ -262,13 +327,6 @@ const Terminal = ({
         }
         return seq
       }
-
-      // Para após 2 segundos com tempos diferentes para cada rolo
-      const finalReels = [
-        symbols[Math.floor(Math.random() * symbols.length)],
-        symbols[Math.floor(Math.random() * symbols.length)],
-        symbols[Math.floor(Math.random() * symbols.length)]
-      ]
 
       stoppedReelsRef.current = { reel1: false, reel2: false, reel3: false }
 
@@ -319,10 +377,17 @@ const Terminal = ({
         let result = ''
         if (allSame) {
           result = '🎉 JACKPOT! Todos os símbolos são iguais!'
+          setSlotWon(true)
+          // Remove o efeito após 3 segundos
+          setTimeout(() => {
+            setSlotWon(false)
+          }, 3000)
         } else if (twoSame) {
           result = '🎊 Quase lá! Dois símbolos iguais!'
+          setSlotWon(false)
         } else {
           result = 'Tente novamente!'
+          setSlotWon(false)
         }
 
         setSlotResult(result)
@@ -625,8 +690,17 @@ const Terminal = ({
       const currentCommand = inputParts[0].toLowerCase()
 
       if (currentCommand) {
+        // Lista de comandos ocultos que só aparecem quando identificado
+        const hiddenCommands = ['secret', 'matrix', 'fortune', 'neofetch', 'init-game', 'spin', 'exit-game', 'logout']
+
         // Busca comandos que começam com o texto digitado
-        const availableCommands = Object.keys(commands)
+        let availableCommands = Object.keys(commands)
+
+        // Remove comandos ocultos se não estiver identificado
+        if (!isIdentified) {
+          availableCommands = availableCommands.filter(cmd => !hiddenCommands.includes(cmd))
+        }
+
         const matchingCommands = availableCommands.filter(cmd =>
           cmd.startsWith(currentCommand)
         )

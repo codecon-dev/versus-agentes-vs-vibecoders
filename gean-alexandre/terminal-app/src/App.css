@@ -169,3 +169,119 @@
   text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
   font-family: 'Courier New', 'Courier', monospace;
 }
+
+/* Efeitos de vitória - JACKPOT */
+.slot-machine-container.jackpot-win {
+  animation: jackpotShake 0.5s ease-in-out infinite;
+}
+
+.slot-machine-title.jackpot-title {
+  animation: jackpotPulse 0.3s ease-in-out infinite;
+  color: #ffbd2e;
+  text-shadow: 
+    0 0 20px rgba(255, 189, 46, 1),
+    0 0 40px rgba(255, 189, 46, 0.8),
+    0 0 60px rgba(255, 189, 46, 0.6);
+}
+
+.slot-machine-reels.jackpot-reels {
+  animation: jackpotShake 0.4s ease-in-out infinite;
+}
+
+.slot-reel.jackpot-reel {
+  animation: jackpotReelShake 0.3s ease-in-out infinite;
+  border-color: #ffbd2e;
+  box-shadow: 
+    0 0 30px rgba(255, 189, 46, 1),
+    0 0 60px rgba(255, 189, 46, 0.8),
+    inset 0 0 20px rgba(255, 189, 46, 0.3);
+  background: rgba(255, 189, 46, 0.3);
+}
+
+.slot-reel-center.jackpot-symbol {
+  animation: jackpotSymbolExplode 0.5s ease-out infinite;
+  font-size: 90px;
+  filter: drop-shadow(0 0 20px rgba(255, 189, 46, 1));
+}
+
+@keyframes jackpotShake {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
+    transform: translate(-5px, -5px) rotate(-2deg);
+  }
+  20% {
+    transform: translate(5px, 5px) rotate(2deg);
+  }
+  30% {
+    transform: translate(-5px, 5px) rotate(-2deg);
+  }
+  40% {
+    transform: translate(5px, -5px) rotate(2deg);
+  }
+  50% {
+    transform: translate(-3px, -3px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(3px, 3px) rotate(1deg);
+  }
+  70% {
+    transform: translate(-3px, 3px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(3px, -3px) rotate(1deg);
+  }
+  90% {
+    transform: translate(-2px, -2px) rotate(-0.5deg);
+  }
+}
+
+@keyframes jackpotPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes jackpotReelShake {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(-8px, -8px) rotate(-3deg) scale(1.05);
+  }
+  50% {
+    transform: translate(8px, 8px) rotate(3deg) scale(1.05);
+  }
+  75% {
+    transform: translate(-8px, 8px) rotate(-3deg) scale(1.05);
+  }
+}
+
+@keyframes jackpotSymbolExplode {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.3) rotate(90deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.3) rotate(270deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
