@@ -12,7 +12,9 @@ const Terminal = ({
   slotReelSymbols,
   setSlotReelSymbols,
   slotWon,
-  setSlotWon
+  setSlotWon,
+  apiSymbols,
+  setApiSymbols
 }) => {
   const [history, setHistory] = useState([
     { type: 'output', text: 'Terminal Retro v1.0' },
@@ -24,6 +26,8 @@ const Terminal = ({
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [isIdentified, setIsIdentified] = useState(false)
   const [userName, setUserName] = useState('guest')
+  const [sessionId, setSessionId] = useState(null)
+  const [balance, setBalance] = useState(0)
   const [slotResult, setSlotResult] = useState(null)
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
@@ -61,7 +65,8 @@ const Terminal = ({
   useEffect(() => {
     // Adiciona resultado do slot ao histórico quando disponível
     if (slotResult) {
-      setHistory(prev => [...prev, { type: 'output', text: slotResult }])
+      const lines = slotResult.split('\n').map(text => ({ type: 'output', text }))
+      setHistory(prev => [...prev, ...lines])
       setSlotResult(null)
     }
   }, [slotResult])
@@ -75,6 +80,29 @@ const Terminal = ({
     window.addEventListener('click', handleClick)
     return () => window.removeEventListener('click', handleClick)
   }, [])
+
+  const triggerGameOver = () => {
+    setBalance(0)
+    setSlotMachineActive(false)
+    setSlotSpinning(false)
+    setIsIdentified(false)
+    setUserName('guest')
+    setSessionId(null)
+    setHistory(prev => [...prev,
+      { type: 'output', text: '' },
+      { type: 'error', text: '╔══════════════════════════════════════════════╗' },
+      { type: 'error', text: '║                                              ║' },
+      { type: 'error', text: '║          💀  G A M E   O V E R  💀          ║' },
+      { type: 'error', text: '║                                              ║' },
+      { type: 'error', text: '║       Seus créditos acabaram!                ║' },
+      { type: 'error', text: '║       Sessão encerrada.                      ║' },
+      { type: 'error', text: '║                                              ║' },
+      { type: 'error', text: '║   Use "login <nome>" para jogar novamente.   ║' },
+      { type: 'error', text: '║                                              ║' },
+      { type: 'error', text: '╚══════════════════════════════════════════════╝' },
+      { type: 'output', text: '' }
+    ])
+  }
 
   const commands = {
     help: () => {
@@ -130,6 +158,7 @@ const Terminal = ({
       lines: [
         `Usuário: ${userName}`,
         `Status: ${isIdentified ? 'Identificado' : 'Não identificado'}`,
+        ...(sessionId ? [`Sessão: ${sessionId}`, `Saldo: R$${balance}`] : []),
         'Sistema: Terminal Retro OS',
         'Versão: 1.0'
       ]
@@ -148,15 +177,34 @@ const Terminal = ({
         }
       }
 
-      setIsIdentified(true)
-      setUserName(name)
+      fetch('http://localhost:8000/api/game/new', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ player_name: name })
+      })
+        .then(res => res.json())
+        .then(data => {
+          setIsIdentified(true)
+          setUserName(data.player_name)
+          setSessionId(data.session_id)
+          setBalance(data.balance)
+          setHistory(prev => [...prev,
+            { type: 'output', text: `Bem-vindo, ${data.player_name}! Sessão: ${data.session_id}` },
+            { type: 'output', text: `Saldo inicial: R$${data.balance}` },
+            { type: 'output', text: 'Acesso autorizado. Comandos ocultos liberados.' },
+            { type: 'output', text: 'Digite "help" para ver todos os comandos disponíveis.' }
+          ])
+        })
+        .catch(() => {
+          setHistory(prev => [...prev, {
+            type: 'error',
+            text: 'Erro ao conectar com o servidor. Verifique se o backend está rodando.'
+          }])
+        })
+
       return {
         type: 'output',
-        lines: [
-          `Bem-vindo, ${name}!`,
-          'Acesso autorizado. Comandos ocultos liberados.',
-          'Digite "help" para ver todos os comandos disponíveis.'
-        ]
+        lines: ['Conectando ao servidor...']
       }
     },
     history: () => ({
@@ -244,10 +292,46 @@ const Terminal = ({
           lines: ['Acesso negado. Você precisa estar identificado para usar este comando.', 'Use "login <seu_nome>" para se identificar.']
         }
       }
-      setSlotMachineActive(true)
+
+      fetch('http://localhost:8000/api/game/symbols')
+        .then(res => res.json())
+        .then(symbols => {
+          setApiSymbols(symbols)
+
+          const names = symbols.map(s => s.name)
+          const initial = names.length >= 3
+            ? [names[0], names[1], names[2]]
+            : ['?', '?', '?']
+          setSlotReels(initial)
+
+          const buildReel = () => {
+            const shuffled = [...names].sort(() => Math.random() - 0.5)
+            while (shuffled.length < 6) shuffled.push(...names)
+            return shuffled.slice(0, 6)
+          }
+          setSlotReelSymbols([buildReel(), buildReel(), buildReel()])
+          setSlotMachineActive(true)
+
+          const symbolLines = symbols.map(s => `  ${s.name} [${s.level}]`)
+          setHistory(prev => [...prev,
+            { type: 'output', text: '🎰 Máquina de Caça-Níquel iniciada!' },
+            { type: 'output', text: `Símbolos carregados: ${symbols.length}` },
+            ...symbolLines.map(text => ({ type: 'output', text })),
+            { type: 'output', text: '' },
+            { type: 'output', text: `Saldo: R$${balance}` },
+            { type: 'output', text: 'Digite "spin" para girar os rolos.' }
+          ])
+        })
+        .catch(() => {
+          setHistory(prev => [...prev, {
+            type: 'error',
+            text: 'Erro ao carregar símbolos do servidor.'
+          }])
+        })
+
       return {
         type: 'output',
-        lines: ['Máquina de Caça-Níquel iniciada! Digite "spin" para girar os rolos.']
+        lines: ['Carregando símbolos do servidor...']
       }
     },
     'exit-game': () => {
@@ -285,113 +369,105 @@ const Terminal = ({
         }
       }
 
-      setSlotSpinning(true)
-      setSlotWon(false) // Reseta o estado de vitória ao iniciar novo spin
-
-      const symbols = ['🍒', '🍋', '🍊', '🍇', '🍉', '⭐', '💎', '7️⃣']
+      // Determina endpoint baseado no parâmetro
       const param = args[0]?.toLowerCase()
-
-      // Determina os símbolos finais baseado no parâmetro
-      let finalReels = []
-
-      if (param === 'win' || param === 'jackpot') {
-        // Força vitória - todos os símbolos iguais
-        const winSymbol = symbols[Math.floor(Math.random() * symbols.length)]
-        finalReels = [winSymbol, winSymbol, winSymbol]
-      } else if (param === 'double' || param === 'two') {
-        // Força dois símbolos iguais
-        const doubleSymbol = symbols[Math.floor(Math.random() * symbols.length)]
-        const differentSymbol = symbols.filter(s => s !== doubleSymbol)[Math.floor(Math.random() * (symbols.length - 1))]
-        // Aleatoriza qual posição será diferente
-        const positions = [0, 1, 2]
-        const diffPos = positions[Math.floor(Math.random() * 3)]
-        finalReels = [doubleSymbol, doubleSymbol, doubleSymbol]
-        finalReels[diffPos] = differentSymbol
-      } else if (param && symbols.includes(param)) {
-        // Força um símbolo específico (todos iguais)
-        finalReels = [param, param, param]
-      } else {
-        // Giro normal aleatório
-        finalReels = [
-          symbols[Math.floor(Math.random() * symbols.length)],
-          symbols[Math.floor(Math.random() * symbols.length)],
-          symbols[Math.floor(Math.random() * symbols.length)]
-        ]
+      let endpoint = `http://localhost:8000/api/game/${sessionId}/run`
+      if (param === 'gold' || param === 'plus' || param === 'normal') {
+        endpoint += `/${param}`
+      } else if (param === '10x') {
+        endpoint += '/10x'
       }
 
-      // Cria sequências aleatórias para cada rolo durante o giro
+      setSlotSpinning(true)
+      setSlotWon(false)
+
+      const names = apiSymbols.map(s => s.name)
+
+      // Cria sequências aleatórias para animação durante o giro
       const createRandomSequence = () => {
         const seq = []
         for (let i = 0; i < 6; i++) {
-          seq.push(symbols[Math.floor(Math.random() * symbols.length)])
+          seq.push(names[Math.floor(Math.random() * names.length)])
         }
         return seq
       }
 
       stoppedReelsRef.current = { reel1: false, reel2: false, reel3: false }
 
-      // Atualiza os símbolos dos rolos durante o giro
-      const spinInterval = setInterval(() => {
-        setSlotReelSymbols([
-          stoppedReelsRef.current.reel1
-            ? [finalReels[0], ...symbols.filter(s => s !== finalReels[0]).slice(0, 5)]
-            : createRandomSequence(),
-          stoppedReelsRef.current.reel2
-            ? [finalReels[1], ...symbols.filter(s => s !== finalReels[1]).slice(0, 5)]
-            : createRandomSequence(),
-          stoppedReelsRef.current.reel3
-            ? [finalReels[2], ...symbols.filter(s => s !== finalReels[2]).slice(0, 5)]
-            : createRandomSequence()
-        ])
-      }, 50)
+      // Chama a API
+      fetch(endpoint, { method: 'POST' })
+        .then(res => {
+          if (res.status === 402) return res.json().then(d => ({ ...d, _gameOver: true }))
+          return res.json()
+        })
+        .then(data => {
+          if (data._gameOver) {
+            setSlotSpinning(false)
+            triggerGameOver()
+            return
+          }
 
-      // Para o primeiro rolo após 1.5s
-      setTimeout(() => {
-        stoppedReelsRef.current.reel1 = true
-      }, 1500)
+          const finalReels = data.symbols.map(s => s.name)
 
-      // Para o segundo rolo após 1.8s
-      setTimeout(() => {
-        stoppedReelsRef.current.reel2 = true
-      }, 1800)
+          // Animação dos reels com paradas escalonadas
+          const spinInterval = setInterval(() => {
+            setSlotReelSymbols([
+              stoppedReelsRef.current.reel1
+                ? [finalReels[0], ...names.filter(n => n !== finalReels[0]).slice(0, 5)]
+                : createRandomSequence(),
+              stoppedReelsRef.current.reel2
+                ? [finalReels[1], ...names.filter(n => n !== finalReels[1]).slice(0, 5)]
+                : createRandomSequence(),
+              stoppedReelsRef.current.reel3
+                ? [finalReels[2], ...names.filter(n => n !== finalReels[2]).slice(0, 5)]
+                : createRandomSequence()
+            ])
+          }, 50)
 
-      // Para o terceiro rolo após 2s e define resultado final
-      setTimeout(() => {
-        stoppedReelsRef.current.reel3 = true
-        clearInterval(spinInterval)
-        const newSeq1 = [finalReels[0], ...symbols.filter(s => s !== finalReels[0]).slice(0, 5)]
-        const newSeq2 = [finalReels[1], ...symbols.filter(s => s !== finalReels[1]).slice(0, 5)]
-        const newSeq3 = [finalReels[2], ...symbols.filter(s => s !== finalReels[2]).slice(0, 5)]
-        setSlotReelSymbols([
-          newSeq1,
-          newSeq2,
-          newSeq3
-        ])
-        setSlotReels(finalReels)
-        setSlotSpinning(false)
-
-        // Verifica se ganhou
-        const allSame = finalReels[0] === finalReels[1] && finalReels[1] === finalReels[2]
-        const twoSame = finalReels[0] === finalReels[1] || finalReels[1] === finalReels[2] || finalReels[0] === finalReels[2]
-
-        let result = ''
-        if (allSame) {
-          result = '🎉 JACKPOT! Todos os símbolos são iguais!'
-          setSlotWon(true)
-          // Remove o efeito após 3 segundos
+          setTimeout(() => { stoppedReelsRef.current.reel1 = true }, 1500)
+          setTimeout(() => { stoppedReelsRef.current.reel2 = true }, 1800)
           setTimeout(() => {
-            setSlotWon(false)
-          }, 3000)
-        } else if (twoSame) {
-          result = '🎊 Quase lá! Dois símbolos iguais!'
-          setSlotWon(false)
-        } else {
-          result = 'Tente novamente!'
-          setSlotWon(false)
-        }
+            stoppedReelsRef.current.reel3 = true
+            clearInterval(spinInterval)
 
-        setSlotResult(result)
-      }, 2000)
+            setSlotReelSymbols([
+              [finalReels[0], ...names.filter(n => n !== finalReels[0]).slice(0, 5)],
+              [finalReels[1], ...names.filter(n => n !== finalReels[1]).slice(0, 5)],
+              [finalReels[2], ...names.filter(n => n !== finalReels[2]).slice(0, 5)]
+            ])
+            setSlotReels(finalReels)
+            setSlotSpinning(false)
+            setBalance(data.balance)
+
+            const won = data.points > 0
+            const lines = []
+
+            if (won) {
+              setSlotWon(true)
+              setTimeout(() => setSlotWon(false), 3000)
+              lines.push(`🎉 JACKPOT! Você ganhou R$${data.credit}!`)
+            } else {
+              lines.push('Tente novamente!')
+            }
+
+            lines.push(`  Custo: -R$${data.debit}`)
+            if (data.credit > 0) lines.push(`  Ganho: +R$${data.credit}`)
+            lines.push(`  Saldo: R$${data.balance}`)
+
+            setSlotResult(lines.join('\n'))
+
+            if (data.balance <= 0) {
+              setTimeout(() => triggerGameOver(), 1500)
+            }
+          }, 2000)
+        })
+        .catch(() => {
+          setSlotSpinning(false)
+          setHistory(prev => [...prev, {
+            type: 'error',
+            text: 'Erro ao conectar com o servidor.'
+          }])
+        })
 
       return {
         type: 'output',
@@ -584,11 +660,13 @@ const Terminal = ({
       }
       setIsIdentified(false)
       setUserName('guest')
+      setSessionId(null)
+      setBalance(0)
       return {
         type: 'output',
         lines: [
           'Logout realizado com sucesso.',
-          'Comandos ocultos foram bloqueados.',
+          'Sessão encerrada.',
           'Use "login <seu_nome>" para se identificar novamente.'
         ]
       }

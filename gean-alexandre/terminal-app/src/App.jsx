@@ -13,6 +13,15 @@ function App() {
     ['🍋', '🍊', '🍇', '🍉', '⭐', '💎'],
     ['🍊', '🍇', '🍉', '⭐', '💎', '7️⃣']
   ])
+  const [apiSymbols, setApiSymbols] = useState([])
+
+  const getSymbolImage = (name) => {
+    const symbol = apiSymbols.find(s => s.name === name)
+    if (symbol && symbol.image) {
+      return <img src={symbol.image} alt={name} className="slot-symbol-img" />
+    }
+    return name
+  }
 
   const handleCommandExecuted = () => {
     // Gera uma imagem aleatória usando Picsum Photos apenas se a máquina não estiver ativa
@@ -30,46 +39,21 @@ function App() {
           <div className={`slot-machine-container ${slotWon ? 'jackpot-win' : ''}`}>
             <div className={`slot-machine-title ${slotWon ? 'jackpot-title' : ''}`}>🎰 CAÇA-NÍQUEL 🎰</div>
             <div className={`slot-machine-reels ${slotWon ? 'jackpot-reels' : ''}`}>
-              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
-                <div className="slot-reel-strip">
-                  {slotReelSymbols[0].map((symbol, idx) => (
-                    <div key={idx} className="slot-symbol">{symbol}</div>
-                  ))}
-                  {/* Duplica para efeito infinito */}
-                  {slotReelSymbols[0].map((symbol, idx) => (
-                    <div key={`dup-${idx}`} className="slot-symbol">{symbol}</div>
-                  ))}
+              {[0, 1, 2].map(reelIdx => (
+                <div key={reelIdx} className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
+                  <div className="slot-reel-strip">
+                    {slotReelSymbols[reelIdx].map((symbol, idx) => (
+                      <div key={idx} className="slot-symbol">{getSymbolImage(symbol)}</div>
+                    ))}
+                    {slotReelSymbols[reelIdx].map((symbol, idx) => (
+                      <div key={`dup-${idx}`} className="slot-symbol">{getSymbolImage(symbol)}</div>
+                    ))}
+                  </div>
+                  {!slotSpinning && (
+                    <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{getSymbolImage(slotReels[reelIdx])}</div>
+                  )}
                 </div>
-                {!slotSpinning && (
-                  <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{slotReels[0]}</div>
-                )}
-              </div>
-              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
-                <div className="slot-reel-strip">
-                  {slotReelSymbols[1].map((symbol, idx) => (
-                    <div key={idx} className="slot-symbol">{symbol}</div>
-                  ))}
-                  {slotReelSymbols[1].map((symbol, idx) => (
-                    <div key={`dup-${idx}`} className="slot-symbol">{symbol}</div>
-                  ))}
-                </div>
-                {!slotSpinning && (
-                  <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{slotReels[1]}</div>
-                )}
-              </div>
-              <div className={`slot-reel ${slotSpinning ? 'spinning' : ''} ${slotWon ? 'jackpot-reel' : ''}`}>
-                <div className="slot-reel-strip">
-                  {slotReelSymbols[2].map((symbol, idx) => (
-                    <div key={idx} className="slot-symbol">{symbol}</div>
-                  ))}
-                  {slotReelSymbols[2].map((symbol, idx) => (
-                    <div key={`dup-${idx}`} className="slot-symbol">{symbol}</div>
-                  ))}
-                </div>
-                {!slotSpinning && (
-                  <div className={`slot-reel-center ${slotWon ? 'jackpot-symbol' : ''}`}>{slotReels[2]}</div>
-                )}
-              </div>
+              ))}
             </div>
             <div className="slot-machine-instructions">
               Digite "spin" no terminal para girar os rolos
@@ -100,6 +84,8 @@ function App() {
           setSlotReelSymbols={setSlotReelSymbols}
           slotWon={slotWon}
           setSlotWon={setSlotWon}
+          apiSymbols={apiSymbols}
+          setApiSymbols={setApiSymbols}
         />
       </div>
     </div>

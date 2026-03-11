@@ -37,7 +37,6 @@ class GameResult(models.Model):
 
     def calculate_points(self):
         symbols = [self.symbol_1, self.symbol_2, self.symbol_3]
-        levels = [s.level for s in symbols]
-        if levels[0] == levels[1] == levels[2]:
-            return self.POINTS_MAP.get(levels[0], 0)
+        if symbols[0].id == symbols[1].id == symbols[2].id:
+            return self.POINTS_MAP.get(symbols[0].level, 0)
         return 0
