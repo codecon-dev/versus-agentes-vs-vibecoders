@@ -1,0 +1,235 @@
+.terminal-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  padding: 0;
+}
+
+.terminal {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  background: #0d2818;
+  border: 2px solid #1a4d2e;
+  border-radius: 8px;
+  box-shadow:
+    0 0 20px rgba(0, 255, 0, 0.3),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Courier New', 'Courier', monospace;
+  position: relative;
+}
+
+.terminal-header {
+  background: #1a4d2e;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 2px solid #0d2818;
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.btn-close {
+  background: #ff5f56;
+  box-shadow: 0 0 5px rgba(255, 95, 86, 0.5);
+}
+
+.btn-minimize {
+  background: #ffbd2e;
+  box-shadow: 0 0 5px rgba(255, 189, 46, 0.5);
+}
+
+.btn-maximize {
+  background: #27c93f;
+  box-shadow: 0 0 5px rgba(39, 201, 63, 0.5);
+}
+
+.terminal-title {
+  color: #39ff14;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+}
+
+.terminal-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: #39ff14;
+  font-size: 14px;
+  line-height: 1.6;
+  background: #0d2818;
+  scrollbar-width: thin;
+  scrollbar-color: #1a4d2e #0d2818;
+  text-align: left;
+  scroll-behavior: auto;
+  position: relative;
+}
+
+.terminal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+  background: #0d2818;
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+  background: #1a4d2e;
+  border-radius: 5px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+  background: #2d5a3d;
+}
+
+.terminal-line {
+  margin-bottom: 2px;
+  margin-top: 0;
+  word-wrap: break-word;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+  margin-left: 0;
+  padding-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-indent: 0;
+  white-space: pre-wrap;
+  vertical-align: baseline;
+}
+
+.terminal-line.input {
+  color: #39ff14;
+  font-weight: bold;
+}
+
+.terminal-line.output {
+  color: #39ff14;
+}
+
+.terminal-line.error {
+  color: #ff4444;
+  text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
+}
+
+.terminal-input-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.prompt {
+  color: #39ff14;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.8);
+  flex-shrink: 0;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.measure-text {
+  position: absolute;
+  visibility: hidden;
+  white-space: pre;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 14px;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.terminal-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #39ff14;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 14px;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  caret-color: transparent;
+}
+
+.terminal-input::placeholder {
+  color: #1a4d2e;
+}
+
+.cursor {
+  color: #39ff14;
+  animation: blink 1s infinite;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 1);
+  position: absolute;
+  left: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Efeito de brilho no texto */
+.terminal-line {
+  animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+  from {
+    text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+  }
+  to {
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.8), 0 0 20px rgba(57, 255, 20, 0.3);
+  }
+}
+
+/* Efeito de scanline para dar mais autenticidade */
+.terminal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  opacity: 0.3;
+}

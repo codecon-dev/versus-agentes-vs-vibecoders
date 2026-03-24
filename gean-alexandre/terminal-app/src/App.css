@@ -1,0 +1,581 @@
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.image-viewer {
+  flex: 1;
+  width: 100%;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.viewer-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.viewer-placeholder {
+  color: #666;
+  font-size: 18px;
+  text-align: center;
+  padding: 40px;
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.terminal-section {
+  height: 400px;
+  min-height: 400px;
+  width: 100%;
+  background: #0a0a0a;
+  border-top: 2px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Máquina de Caça-Níquel */
+.slot-machine-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.slot-machine-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #39ff14;
+  text-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+  margin-bottom: 40px;
+  letter-spacing: 3px;
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+.slot-machine-reels {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 40px 0;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 3px solid #1a4d2e;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+}
+
+.slot-reel {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(26, 77, 46, 0.5);
+  border: 3px solid #39ff14;
+  border-radius: 12px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(57, 255, 20, 0.3);
+  transition: all 0.3s ease;
+}
+
+.slot-reel-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+.slot-reel.spinning .slot-reel-strip {
+  animation: reelSpin 0.08s linear infinite;
+}
+
+.slot-reel:not(.spinning) .slot-reel-strip {
+  display: none;
+}
+
+@keyframes reelSpin {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-120px);
+  }
+}
+
+.slot-symbol {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  flex-shrink: 0;
+}
+
+.slot-symbol-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 6px rgba(57, 255, 20, 0.4));
+}
+
+.slot-reel-center {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+}
+
+.slot-reel.spinning {
+  border-color: #ffbd2e;
+  box-shadow: 0 0 30px rgba(255, 189, 46, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 189, 46, 0.2);
+}
+
+.slot-reel.spinning .slot-reel-center {
+  display: none;
+}
+
+.slot-machine-instructions {
+  margin-top: 30px;
+  color: #39ff14;
+  font-size: 18px;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
+  font-family: 'Courier New', 'Courier', monospace;
+}
+
+/* ==========================================
+   NORMAL WIN - shake suave
+   ========================================== */
+.slot-machine-container.win-normal {
+  animation: normalShake 0.5s ease-in-out 3;
+}
+
+.win-title-normal {
+  color: #39ff14;
+  text-shadow: 0 0 20px rgba(57, 255, 20, 1), 0 0 40px rgba(57, 255, 20, 0.6);
+}
+
+.win-reel-normal {
+  border-color: #39ff14;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.8), inset 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+.win-symbol-normal {
+  animation: normalPulse 0.6s ease-in-out 3;
+}
+
+@keyframes normalShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 0); }
+  75% { transform: translate(3px, 0); }
+}
+
+@keyframes normalPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ==========================================
+   PLUS WIN - lantejoulas / sparkles
+   ========================================== */
+.slot-machine-container.win-plus {
+  animation: plusGlow 0.4s ease-in-out infinite alternate;
+}
+
+.sparkles-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+    radial-gradient(2px 2px at 40% 70%, #c0f, transparent),
+    radial-gradient(2px 2px at 60% 20%, #ff0, transparent),
+    radial-gradient(2px 2px at 80% 60%, #0ff, transparent),
+    radial-gradient(3px 3px at 10% 80%, #f0f, transparent),
+    radial-gradient(3px 3px at 70% 40%, #ff0, transparent),
+    radial-gradient(2px 2px at 90% 10%, #fff, transparent),
+    radial-gradient(2px 2px at 50% 50%, #c0f, transparent),
+    radial-gradient(3px 3px at 30% 90%, #0ff, transparent),
+    radial-gradient(2px 2px at 85% 85%, #ff0, transparent);
+  background-size: 200% 200%;
+  animation: sparkleMove 1s linear infinite;
+}
+
+.win-title-plus {
+  color: #c0f;
+  text-shadow: 0 0 20px rgba(204, 0, 255, 1), 0 0 40px rgba(204, 0, 255, 0.6);
+  animation: plusPulse 0.3s ease-in-out infinite alternate;
+}
+
+.win-reels-plus {
+  animation: plusShake 0.4s ease-in-out infinite;
+}
+
+.win-reel-plus {
+  border-color: #c0f;
+  box-shadow: 0 0 25px rgba(204, 0, 255, 0.8), 0 0 50px rgba(204, 0, 255, 0.4), inset 0 0 15px rgba(204, 0, 255, 0.2);
+  background: rgba(204, 0, 255, 0.15);
+}
+
+.win-symbol-plus {
+  animation: plusSymbol 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes sparkleMove {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+@keyframes plusGlow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.15); }
+}
+
+@keyframes plusPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes plusShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-4px, -2px); }
+  50% { transform: translate(4px, 2px); }
+  75% { transform: translate(-2px, 4px); }
+}
+
+@keyframes plusSymbol {
+  from { transform: scale(1); filter: brightness(1); }
+  to { transform: scale(1.15); filter: brightness(1.3); }
+}
+
+/* ==========================================
+   GOLD WIN - fogos de artifício
+   ========================================== */
+.slot-machine-container.win-gold {
+  animation: goldShake 0.3s ease-in-out infinite;
+}
+
+.fireworks-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fireworks-overlay::before,
+.fireworks-overlay::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.fireworks-overlay::before {
+  top: 20%;
+  left: 25%;
+  box-shadow:
+    0 0 0 0 rgba(255, 215, 0, 1),
+    30px -40px 0 0 #ff4444,
+    -25px -50px 0 0 #ffbd2e,
+    50px -20px 0 0 #ff6600,
+    -40px -30px 0 0 #ff4444,
+    15px -60px 0 0 #ffbd2e,
+    -15px -15px 0 0 #ff6600,
+    45px -55px 0 0 #ff4444,
+    -35px -45px 0 0 #ffbd2e,
+    60px -35px 0 0 #ff6600,
+    -50px -60px 0 0 #ff4444,
+    20px 10px 0 0 #ffbd2e;
+  animation: fireworkExplode1 1.2s ease-out infinite;
+}
+
+.fireworks-overlay::after {
+  top: 30%;
+  right: 20%;
+  box-shadow:
+    0 0 0 0 rgba(255, 100, 0, 1),
+    -30px -35px 0 0 #ffbd2e,
+    25px -55px 0 0 #ff4444,
+    -50px -25px 0 0 #ff6600,
+    40px -40px 0 0 #ffbd2e,
+    -20px -65px 0 0 #ff4444,
+    35px -10px 0 0 #ff6600,
+    -45px -50px 0 0 #ffbd2e,
+    55px -30px 0 0 #ff4444,
+    -10px -20px 0 0 #ff6600,
+    20px -70px 0 0 #ffbd2e,
+    -60px -40px 0 0 #ff4444;
+  animation: fireworkExplode2 1.4s ease-out infinite 0.3s;
+}
+
+.win-title-gold {
+  color: #ffd700;
+  font-size: 42px;
+  animation: goldTitle 0.3s ease-in-out infinite alternate;
+  text-shadow:
+    0 0 20px rgba(255, 215, 0, 1),
+    0 0 40px rgba(255, 215, 0, 0.8),
+    0 0 80px rgba(255, 215, 0, 0.5),
+    0 0 120px rgba(255, 100, 0, 0.3);
+}
+
+.win-reels-gold {
+  animation: goldReelsShake 0.3s ease-in-out infinite;
+}
+
+.win-reel-gold {
+  border-color: #ffd700;
+  box-shadow:
+    0 0 30px rgba(255, 215, 0, 1),
+    0 0 60px rgba(255, 215, 0, 0.6),
+    0 0 100px rgba(255, 100, 0, 0.3),
+    inset 0 0 20px rgba(255, 215, 0, 0.3);
+  background: rgba(255, 215, 0, 0.2);
+  animation: goldReelPulse 0.3s ease-in-out infinite alternate;
+}
+
+.win-symbol-gold {
+  animation: goldSymbol 0.4s ease-in-out infinite;
+}
+
+@keyframes fireworkExplode1 {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes fireworkExplode2 {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes goldShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-5px, -5px) rotate(-2deg); }
+  30% { transform: translate(5px, -3px) rotate(2deg); }
+  50% { transform: translate(-3px, 5px) rotate(-1deg); }
+  70% { transform: translate(5px, 3px) rotate(1deg); }
+  90% { transform: translate(-3px, -3px) rotate(-1deg); }
+}
+
+@keyframes goldTitle {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+@keyframes goldReelsShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-6px, -4px) rotate(-2deg); }
+  50% { transform: translate(6px, 4px) rotate(2deg); }
+  75% { transform: translate(-4px, 6px) rotate(-1deg); }
+}
+
+@keyframes goldReelPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes goldSymbol {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.2) rotate(5deg); }
+  50% { transform: scale(1.1) rotate(-5deg); }
+  75% { transform: scale(1.2) rotate(3deg); }
+}
+
+/* ==========================================
+   DESTRUCTION / DISINTEGRATION - spin 10x
+   ========================================== */
+.app-destroying {
+  animation: screenGlitch 0.15s linear infinite;
+}
+
+.app-destroying .image-viewer,
+.app-destroying .terminal-section {
+  animation: disintegrate 4s ease-in forwards;
+}
+
+.destroy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(255, 0, 0, 0.05);
+  animation: destroyFlash 0.2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.destroy-cracks {
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  pointer-events: none;
+  background:
+    linear-gradient(45deg, transparent 48%, rgba(255, 50, 50, 0.8) 49%, rgba(255, 50, 50, 0.8) 51%, transparent 52%) 0 0 / 100% 100% no-repeat,
+    linear-gradient(-30deg, transparent 47%, rgba(255, 100, 0, 0.6) 48%, rgba(255, 100, 0, 0.6) 52%, transparent 53%) 0 0 / 100% 100% no-repeat,
+    linear-gradient(70deg, transparent 46%, rgba(255, 0, 0, 0.5) 47%, rgba(255, 0, 0, 0.5) 53%, transparent 54%) 0 0 / 100% 100% no-repeat,
+    linear-gradient(-60deg, transparent 49%, rgba(255, 80, 0, 0.7) 50%, rgba(255, 80, 0, 0.7) 51%, transparent 52%) 0 0 / 100% 100% no-repeat,
+    linear-gradient(20deg, transparent 48.5%, rgba(255, 30, 30, 0.6) 49%, rgba(255, 30, 30, 0.6) 51%, transparent 51.5%) 0 0 / 100% 100% no-repeat;
+  animation: cracksAppear 1s ease-out forwards;
+  opacity: 0;
+}
+
+.destroy-glitch-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 102;
+  font-size: 72px;
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  color: #ff0000;
+  text-shadow:
+    3px 0 #00ff00,
+    -3px 0 #0000ff,
+    0 0 20px rgba(255, 0, 0, 1),
+    0 0 60px rgba(255, 0, 0, 0.5);
+  animation: glitchText 0.1s linear infinite;
+  letter-spacing: 8px;
+  white-space: nowrap;
+}
+
+.destroy-fragments {
+  position: fixed;
+  inset: 0;
+  z-index: 103;
+  pointer-events: none;
+}
+
+.destroy-fragment {
+  position: absolute;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 26, 0.9) 0%,
+    rgba(10, 10, 10, 0.95) 50%,
+    rgba(57, 255, 20, 0.15) 100%
+  );
+  border: 1px solid rgba(255, 50, 50, 0.6);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4), inset 0 0 5px rgba(0, 0, 0, 0.8);
+  animation: fragmentFly ease-in forwards;
+  opacity: 0;
+  animation-delay: inherit;
+  animation-duration: inherit;
+}
+
+@keyframes screenGlitch {
+  0% { transform: translate(0, 0) skew(0deg); filter: hue-rotate(0deg); }
+  20% { transform: translate(-3px, 2px) skew(0.5deg); filter: hue-rotate(90deg); }
+  40% { transform: translate(3px, -1px) skew(-0.3deg); filter: hue-rotate(180deg); }
+  60% { transform: translate(-2px, -2px) skew(0.2deg); filter: hue-rotate(270deg); }
+  80% { transform: translate(2px, 1px) skew(-0.5deg); filter: hue-rotate(360deg); }
+  100% { transform: translate(0, 0) skew(0deg); filter: hue-rotate(0deg); }
+}
+
+@keyframes destroyFlash {
+  0% { background: rgba(255, 0, 0, 0.03); }
+  100% { background: rgba(255, 0, 0, 0.12); }
+}
+
+@keyframes cracksAppear {
+  0% { opacity: 0; transform: scale(0.95); }
+  30% { opacity: 0; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glitchText {
+  0% { transform: translate(-50%, -50%) skew(0deg); clip-path: inset(0 0 0 0); }
+  10% { transform: translate(-48%, -52%) skew(2deg); clip-path: inset(20% 0 30% 0); }
+  20% { transform: translate(-52%, -48%) skew(-1deg); clip-path: inset(50% 0 10% 0); }
+  30% { transform: translate(-50%, -50%) skew(0.5deg); clip-path: inset(10% 0 60% 0); }
+  40% { transform: translate(-49%, -51%) skew(-2deg); clip-path: inset(40% 0 20% 0); }
+  50% { transform: translate(-51%, -49%) skew(1deg); clip-path: inset(0 0 0 0); }
+  60% { transform: translate(-50%, -50%) skew(-0.5deg); clip-path: inset(30% 0 40% 0); }
+  70% { transform: translate(-52%, -50%) skew(1.5deg); clip-path: inset(60% 0 5% 0); }
+  80% { transform: translate(-48%, -50%) skew(-1deg); clip-path: inset(5% 0 50% 0); }
+  90% { transform: translate(-50%, -52%) skew(0deg); clip-path: inset(0 0 0 0); }
+  100% { transform: translate(-50%, -50%) skew(0deg); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes fragmentFly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(
+        calc((var(--rand-x, 0.5) - 0.5) * 300vw),
+        calc((var(--rand-y, 0.5) - 0.5) * 300vh)
+      )
+      rotate(calc((var(--rand-r, 0.5) - 0.5) * 720deg))
+      scale(0);
+  }
+}
+
+@keyframes disintegrate {
+  0% { opacity: 1; filter: none; }
+  50% { opacity: 0.7; filter: brightness(1.5) saturate(0.3); }
+  80% { opacity: 0.3; filter: brightness(2) saturate(0) blur(2px); }
+  100% { opacity: 0; filter: brightness(3) saturate(0) blur(10px); }
+}
